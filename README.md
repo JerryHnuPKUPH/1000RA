@@ -16,16 +16,16 @@ Files description:
 **The taxonomy information of the 16S rRNA ASV; the ASVs were anotated at the phylum, class, order, family, genus and species levels.**
 - 2-1.stackplot_group_HC.txt
 
-**Taxonomy data for HC group, top 23 genera and the other**
+**Taxonomy data for HC group at the genus level, top 23 genera and the other**
 - 2-1.stackplot_group_RA.txt
 
-**Taxonomy data for RA group, top 23 genera and the other**
+**Taxonomy data for RA group at the genus level, top 23 genera and the other**
 - 2-1.stackplot_sample_HC.txt
 
-**Taxonomy data for all samples in the HC group, top 23 genera and the other**
+**Taxonomy data for all samples in the HC group at the genus level, top 23 genera and the other**
 - 2-1.stackplot_sample_RA.txt
 
-**Taxonomy data for all samples in the RA group, top 23 genera and the other**
+**Taxonomy data for all samples in the RA group at the genus level, top 23 genera and the other**
 - 2-1a.tax_6Genus0.001_HC.txt
 
 **Taxonomy data for HC group, presenting all genera with abundance over 0.1%**
