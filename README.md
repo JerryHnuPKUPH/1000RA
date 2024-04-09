@@ -1,9 +1,9 @@
 # Files Description
 
-Version：v1
-Update：2024/4/9
+Version：v1;
+Update：2024/4/9.
 
-## Files in the /Data folder
+## Files in the /data folder
 Files description:
 - 1.16S.ASV.profile.original.rds    # The original 16S rRNA ASV profile
 - 1.sample.info.original.rds        # The sample information (metadata) for the 1000RA cohort
@@ -18,3 +18,12 @@ Files description:
 - 2-1b.RA.cuttree.txt               # Sample clustering for RA group
 - 2-2.bray_curtis.rds               # Beta diversity matrix
 
+## Files in the /script folder
+Files description:
+1.tax_stackplot.Rmd                 # The Rmarkdown file for visualization code for stackplot in the Group and the Sample condition
+2.3D-CPcoa.Rmd                      # The Rmarkdown file for beta diversity visualization
+
+
+
+
+Copyright 2024-2026 Jun Xu <xujun@hsc.pku.edu.cn>
