@@ -1,0 +1,120 @@
+---
+title: "stack plot"
+author: "Jun Xu"
+date: "8 Apr., 2024"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r main}
+options(warn = -1)
+#  Clean enviroment object
+rm(list=ls()) 
+
+
+# 1.2 setting source
+site="https://mirrors.tuna.tsinghua.edu.cn/CRAN"
+# 2. install packages
+# 2.1 install CRAN packages
+package_list = c("reshape2","ggplot2","vegan", "ggrepel","ggsci","devtools","plotly","MASS")
+#  
+for(p in package_list){
+  if(!suppressWarnings(suppressMessages(require(p, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)))){
+    install.packages(p, repos=site)
+    suppressWarnings(suppressMessages(library(p, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)))
+  }
+}
+
+# 2.2 install bioconductor packages
+package_list = c("digest","ggrepel","RColorBrewer")
+for(p in package_list){
+  if(!suppressWarnings(suppressMessages(require(p, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)))){
+    BiocManager::install(p)
+    suppressWarnings(suppressMessages(library(p, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)))
+  }
+}
+
+# 2.3 install Github packages
+package_list = c("microbiota/amplicon")
+for(p in package_list){
+  q=unlist(strsplit(p,split = "/"))[2]
+  if(!suppressWarnings(suppressMessages(require(q, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)))){
+    install_github(p)
+    suppressWarnings(suppressMessages(library(q, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)))
+  }
+}
+
+
+```
+
+## reading input files
+
+```{r read}
+
+# 3. reading files
+# 3.1 reading taxa file
+distance_mat <- readRDS("../data/2-2.bray_curtis.rds")
+# reading metadata file
+metadata <- readRDS("../data/1.sample.info.original.rds") 
+
+# 3.2 defining group
+sampFile = as.data.frame(metadata[,c("Group (1=HC,2=RA)")],row.names = row.names(metadata))
+colnames(sampFile)[1] = "group"
+
+
+```
+
+## Analysis
+
+```{r test}
+
+# 4. Statistics
+# 函数提取CCA中主要结果
+variability_table = function(cca){
+  chi = c(cca$tot.chi, cca$CCA$tot.chi, cca$CA$tot.chi)
+  variability_table = cbind(chi, chi/chi[1])
+  colnames(variability_table) = c("inertia", "proportion")
+  rownames(variability_table) = c("total", "constrained", "unconstrained")
+  return(variability_table)
+}
+
+# Constrained analysis OTU table by genotype
+capscale.gen = capscale(as.dist(distance_mat) ~ group, data=sampFile, add=F, sqrt.dist=T)
+
+# ANOVA-like permutation analysis
+perm_anova.gen = anova.cca(capscale.gen, permutations = 1000, parallel = 4)
+
+# generate variability tables and calculate confidence intervals for the variance
+var_tbl.gen = variability_table(capscale.gen)
+eig = capscale.gen$CCA$eig
+variance = var_tbl.gen["constrained", "proportion"]
+p.val = perm_anova.gen[1, 4]
+
+# extract the weighted average (sample) scores
+caps <- scores(capscale.gen,choices=c("CAP1","MDS1"))
+points = data.frame(caps$sites)
+points = cbind(sampFile, points[rownames(points),])
+
+sample_HC <- points[points$group=="1",]
+sample_RA <- points[points$group=="2",]
+```
+
+# Visualization
+
+```{r plot}
+
+kd_HC <- with(sample_HC,kde2d(CAP1,MDS1,n=50))
+persp(x=kd_HC$x,y=kd_HC$y,z=kd_HC$z,theta=300,phi=60,scale = T, axes  =T, border = 1)
+
+kd_RA <- with(sample_RA,kde2d(CAP1,MDS1,n=50))
+persp(x=kd_RA$x,y=kd_RA$y,z=kd_RA$z,theta=300,phi=60,scale = T, axes  =T, border = 1)
+
+```
+
+If used this script, please cited:
+  Yun Liu, Jun Xu, Xinhua Ren, Yu Zhang, Ziliang Ke, Jianhua Zhou, Yang Wang, Yifan Zhang & Yulan Liu (2022) Cholecystectomy-induced secondary bile acids accumulation ameliorates colitis through inhibiting monocyte/macrophage recruitment, Gut Microbes, 14:1, 2107387, DOI: 10.1080/19490976.2022.2107387
+
+Copyright 2024-2026 Jun Xu <xujun@hsc.pku.edu.cn>
