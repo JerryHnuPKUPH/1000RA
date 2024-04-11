@@ -9,8 +9,10 @@ Files description:
 
 **A /qc folder saved QC data from MultiQC and FastQC**
 - /qc/multiqc_report.zip
+
 **The zip file for multiqc_report.file, readers with interest should uzip this file to read the QC report of all sequences.**
 - /qc/multiqc_report_data
+
 **In the /qc folder, there is a /multiqc_report_data folder containing source data of "multiqc_report.html", including multiqc_fastqc.txt, multiqc_general_stats.txt, multiqc_sources.txt**
 - 1.16S.ASV.profile.original.rds
 
